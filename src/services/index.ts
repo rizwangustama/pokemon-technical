@@ -1,2 +1,1 @@
-// Services barrel export
-// Example: export * from './pokemon.service';
+export * from './pokemon.service';

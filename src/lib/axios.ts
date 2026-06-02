@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { env } from './env.client';
+import { generateSignature } from '@/utils/crypto';
 
 export const axiosInstance = axios.create({
   baseURL: env.NEXT_PUBLIC_API_URL,
@@ -10,7 +11,23 @@ export const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-  (config) => config,
+  async (config) => {
+    const timestamp = Date.now().toString();
+    const urlPath = config.url ?? '';
+
+    // Construct the payload to sign: "timestamp:url"
+    const message = `${timestamp}:${urlPath}`;
+
+    try {
+      const signature = await generateSignature(message, env.NEXT_PUBLIC_SIGNATURE_SECRET);
+      config.headers['X-Timestamp'] = timestamp;
+      config.headers['X-Signature'] = signature;
+    } catch (error) {
+      console.error('Signature Generation Error:', error);
+    }
+
+    return config;
+  },
   (error) => Promise.reject(error),
 );
 
