@@ -16,3 +16,5 @@ export const paginatedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =
   });
 
 export type BaseEntity = z.infer<typeof baseEntitySchema>;
+
+export * from './pokemon.schema';
