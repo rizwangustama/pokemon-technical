@@ -1,0 +1,54 @@
+/* ── Custom Cursor ──────────────────────────────────────────────── */
+
+// Hide native cursor globally
+*,
+*::before,
+*::after {
+  cursor: none !important;
+}
+
+// Restore default for mobile / touch devices
+@media (pointer: coarse) {
+
+  *,
+  *::before,
+  *::after {
+    cursor: auto !important;
+  }
+
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
+
+// Base styles shared by both cursor elements
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+// Precise dot — small, always follows instantly
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #1a1a1a;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+// Lagging ring follower
+.cursor-ring {
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1.5px solid rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.4s ease, background 0.4s ease;
+}

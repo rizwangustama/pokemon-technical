@@ -1,0 +1,25 @@
+/* ── CSS Variables ──────────────────────────────────────────────── */
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --color-primary: #3E75C3;
+  --color-primary-light: #EFF3F6;
+  --color-text-main: #2F3133;
+  --color-text-muted: #A0AFBA;
+  --color-text-secondary: #4D5053;
+  --color-border: #E1E9EF;
+  --shadow-card: 0px 4px 24px -4px rgba(0, 0, 0, 0.10);
+  --shadow-card-hover: 0px 12px 40px -8px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* ── Custom Theme for Tailwind v4 ────────────────────────────────── */
+@theme inline {
+  --font-sans: var(--font-inter);
+  --color-primary: #3E75C3;
+  --color-primary-dark: #2F5B9E;
+  --color-primary-light: #EFF3F6;
+  --color-text-main: #2F3133;
+  --color-text-muted: #A0AFBA;
+  --color-text-secondary: #4D5053;
+  --color-border-main: #E1E9EF;
+  --color-bg-light: #F8FAFC;
+}

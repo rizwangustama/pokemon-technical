@@ -1,24 +1,31 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { pokemonService } from '@/services/pokemon.service';
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from '@/constants';
 
 export const pokemonKeys = {
   all: ['pokemon'] as const,
   lists: () => [...pokemonKeys.all, 'list'] as const,
-  list: (limit: number, page: number, search: string, type: string) =>
-    [...pokemonKeys.lists(), { limit, page, search, type }] as const,
+  infiniteList: (limit: number, search: string, type: string) =>
+    [...pokemonKeys.lists(), 'infinite', { limit, search, type }] as const,
   details: () => [...pokemonKeys.all, 'detail'] as const,
   detail: (nameOrId: string | number) =>
     [...pokemonKeys.details(), String(nameOrId).toLowerCase()] as const,
 };
 
+
 /**
- * Custom hook to fetch a paginated list of Pokemon.
+ * Custom hook to fetch an infinite list of Pokemon.
  */
-export function usePokemonList(limit = 20, page = 1, search = '', type = '') {
-  return useQuery({
-    queryKey: pokemonKeys.list(limit, page, search, type),
-    queryFn: () => pokemonService.getPokemonList(limit, page, search, type),
-    placeholderData: (prev) => prev, // Keeps old list visible while loading new pages (smoother UI)
+export function usePokemonInfiniteList(limit = DEFAULT_LIMIT, search = '', type = '') {
+  return useInfiniteQuery({
+    queryKey: pokemonKeys.infiniteList(limit, search, type),
+    queryFn: ({ pageParam }) =>
+      pokemonService.getPokemonList(limit, pageParam, search, type),
+    initialPageParam: DEFAULT_PAGE,
+    getNextPageParam: (lastPage) => {
+      const { page, hasNextPage } = lastPage.data.pagination;
+      return hasNextPage ? page + 1 : undefined;
+    },
   });
 }
 

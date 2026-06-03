@@ -4,12 +4,18 @@ import {
   PokemonDetailResponse,
   PokemonListResponse,
 } from '@/schemas/pokemon.schema';
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from '@/constants';
 
 export const pokemonService = {
   /**
    * Fetch a paginated list of Pokemon.
    */
-  async getPokemonList(limit = 20, page = 1, search = '', type = ''): Promise<PokemonListResponse> {
+  async getPokemonList(
+    limit = DEFAULT_LIMIT,
+    page = DEFAULT_PAGE,
+    search = '',
+    type = '',
+  ): Promise<PokemonListResponse> {
     const response = await axiosInstance.get<PokemonListResponse>('/pokemon/list', {
       params: { limit, page, search, type, types: type },
     });
