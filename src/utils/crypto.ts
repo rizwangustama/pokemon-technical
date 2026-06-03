@@ -1,4 +1,4 @@
-import { hmac } from 'js-sha256';
+import { sha256 } from 'js-sha256';
 
 /**
  * Generate a SHA-256 signature using the native Web Crypto API.
@@ -15,7 +15,7 @@ export async function generateSignature(
 
   if (!isWebCryptoAvailable) {
     // Fallback for non-secure contexts (HTTP)
-    return hmac(secret, message);
+    return sha256.hmac(secret, message);
   }
 
   const encoder = new TextEncoder();
