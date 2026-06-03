@@ -6,7 +6,7 @@ import { logger } from '@/utils/logger';
 import {
   pokeApiPokemonDetailResponseSchema,
   pokemonDetailResponseSchema,
-} from '@/schemas/pokemon.schema';
+} from '@/schemas';
 
 export async function GET(
   request: NextRequest,

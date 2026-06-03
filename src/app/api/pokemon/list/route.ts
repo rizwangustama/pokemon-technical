@@ -7,7 +7,7 @@ import {
   pokeApiPokemonListResponseSchema,
   pokemonListResponseSchema,
   pokeApiTypeDetailResponseSchema,
-} from '@/schemas/pokemon.schema';
+} from '@/schemas';
 
 export async function GET(request: NextRequest) {
   const startTime = performance.now();
