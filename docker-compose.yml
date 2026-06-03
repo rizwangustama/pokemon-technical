@@ -1,0 +1,21 @@
+services:
+  web:
+    container_name: pokemon-technical
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
+        - NEXT_PUBLIC_SIGNATURE_SECRET=${NEXT_PUBLIC_SIGNATURE_SECRET}
+        - POKEAPI_URL=${POKEAPI_URL:-https://pokeapi.co/api/v2}
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
+      - NEXT_PUBLIC_SIGNATURE_SECRET=${NEXT_PUBLIC_SIGNATURE_SECRET}
+      - POKEAPI_URL=${POKEAPI_URL:-https://pokeapi.co/api/v2}
+    env_file:
+      - .env
