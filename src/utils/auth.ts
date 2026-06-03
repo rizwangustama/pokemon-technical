@@ -11,6 +11,11 @@ export async function verifyRequestSignature(
   const clientTimestamp = request.headers.get('x-timestamp');
   const clientSignature = request.headers.get('x-signature');
 
+  // Debug incoming headers on server side (useful for checking AWS CloudFront/API Gateway stripping)
+  console.log(`[Request Verification] Endpoint: ${endpointPath}`);
+  console.log(`[Request Verification] X-Timestamp: ${clientTimestamp}`);
+  console.log(`[Request Verification] X-Signature: ${clientSignature}`);
+
   // 1. Assert signature headers are present
   if (!clientTimestamp || !clientSignature) {
     return Response.json(
