@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { env } from '@/lib/env.server';
 import { verifyRequestSignature } from '@/utils/auth';
 import { extractIdFromUrl, getPokemonArtworkUrl } from '@/utils/index';
+import { logger } from '@/utils/logger';
 import {
   pokeApiPokemonListResponseSchema,
   pokemonListResponseSchema,
@@ -9,16 +10,26 @@ import {
 } from '@/schemas/pokemon.schema';
 
 export async function GET(request: NextRequest) {
+  const startTime = performance.now();
+  const method = request.method;
+  const endpoint = '/api/pokemon/list';
+  const { searchParams } = new URL(request.url);
+  const queryParams = searchParams.toString();
+  const xTimestamp = request.headers.get('X-Timestamp') ?? undefined;
+
+  // Log incoming request
+  logger.logServerRequest(method, endpoint, queryParams, xTimestamp);
+
   try {
     // 1. Verify request signature & timestamp freshness
     const authError = await verifyRequestSignature(request, '/pokemon/list');
     if (authError) {
+      const duration = performance.now() - startTime;
+      logger.logServerResponse(method, endpoint, authError.status, duration, undefined, 'Signature validation failed');
       return authError;
     }
 
     // 4. Retrieve pagination, search, and type query parameters
-    const { searchParams } = new URL(request.url);
-    
     let limit = parseInt(searchParams.get('limit') ?? '20', 10);
     if (isNaN(limit) || limit <= 0) {
       limit = 20;
@@ -37,11 +48,12 @@ export async function GET(request: NextRequest) {
     let results: Array<{ name: string; url: string }> = [];
     let totalCount = 0;
     let hasNextPage = false;
+    let targetUrl = '';
 
     if (typeFilter) {
       // 5a. Fetch Pokemon associated with the requested Type
       // Next.js will cache this response for 24 hours.
-      const targetUrl = `${env.POKEAPI_URL}/type/${typeFilter}`;
+      targetUrl = `${env.POKEAPI_URL}/type/${typeFilter}`;
       const response = await fetch(targetUrl, {
         method: 'GET',
         headers: {
@@ -53,6 +65,8 @@ export async function GET(request: NextRequest) {
       });
 
       if (!response.ok) {
+        const duration = performance.now() - startTime;
+        logger.logServerResponse(method, endpoint, response.status, duration, targetUrl, `Type API error: ${response.statusText}`);
         return NextResponse.json(
           { error: `Upstream type error: ${response.statusText}` },
           { status: response.status }
@@ -75,7 +89,7 @@ export async function GET(request: NextRequest) {
       hasNextPage = offset + limit < totalCount;
     } else if (search) {
       // 5b. Fetch all Pokemon to perform manual server-side filtering
-      const targetUrl = `${env.POKEAPI_URL}/pokemon?limit=1500`;
+      targetUrl = `${env.POKEAPI_URL}/pokemon?limit=1500`;
       const response = await fetch(targetUrl, {
         method: 'GET',
         headers: {
@@ -87,6 +101,8 @@ export async function GET(request: NextRequest) {
       });
 
       if (!response.ok) {
+        const duration = performance.now() - startTime;
+        logger.logServerResponse(method, endpoint, response.status, duration, targetUrl, `All Pokemon API error: ${response.statusText}`);
         return NextResponse.json(
           { error: `Upstream error: ${response.statusText}` },
           { status: response.status }
@@ -106,7 +122,7 @@ export async function GET(request: NextRequest) {
       hasNextPage = offset + limit < totalCount;
     } else {
       // 5c. Fetch normal paginated chunk from PokeAPI
-      const targetUrl = `${env.POKEAPI_URL}/pokemon?limit=${limit}&offset=${offset}`;
+      targetUrl = `${env.POKEAPI_URL}/pokemon?limit=${limit}&offset=${offset}`;
       const response = await fetch(targetUrl, {
         method: 'GET',
         headers: {
@@ -118,6 +134,8 @@ export async function GET(request: NextRequest) {
       });
 
       if (!response.ok) {
+        const duration = performance.now() - startTime;
+        logger.logServerResponse(method, endpoint, response.status, duration, targetUrl, `Paginated Pokemon API error: ${response.statusText}`);
         return NextResponse.json(
           { error: `Upstream error: ${response.statusText}` },
           { status: response.status }
@@ -166,9 +184,29 @@ export async function GET(request: NextRequest) {
     // Validate the transformed enveloped data with Zod
     const validatedTransformed = pokemonListResponseSchema.parse(transformedData);
 
-    return NextResponse.json(validatedTransformed);
+    const duration = performance.now() - startTime;
+    logger.logServerResponse(
+      method,
+      endpoint,
+      200,
+      duration,
+      targetUrl,
+      `Returned ${results.length} of ${totalCount} items (Page ${page})`,
+      validatedTransformed
+    );
+
+    // Also inject custom logging headers into response so front-end has visibility
+    const responseHeaders = new Headers();
+    responseHeaders.set('x-response-time', `${duration.toFixed(1)}ms`);
+    responseHeaders.set('x-server-log', `Served list: count=${results.length}, total=${totalCount}`);
+
+    return NextResponse.json(validatedTransformed, {
+      headers: responseHeaders,
+    });
   } catch (error) {
-    console.error('Pokemon API Route Error:', error);
+    const duration = performance.now() - startTime;
+    logger.logError('Pokemon API Route Error', error);
+    logger.logServerResponse(method, endpoint, 500, duration, undefined, 'Internal Server Error');
     return NextResponse.json(
       { error: 'Internal Server Error in API Route' },
       { status: 500 }
