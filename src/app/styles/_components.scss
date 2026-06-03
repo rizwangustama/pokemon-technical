@@ -1,0 +1,176 @@
+/* ── Hero Component Styles ────────────────────────────────────────── */
+.hero-badge {
+  @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  backdrop-filter: blur(8px);
+  will-change: transform, opacity;
+}
+
+.hero-cta {
+  @apply inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm transition-all duration-300;
+  background: white;
+  color: var(--color-primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  will-change: transform, opacity;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ── Pokemon Card ───────────────────────────────────────────────── */
+.pokemon-card {
+  @apply bg-white p-5 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid transparent;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 3%, transparent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* ── Filter Buttons ─────────────────────────────────────────────── */
+.filter-btn {
+  @apply px-4 py-2.5 rounded-full border border-[#E1E9EF] bg-white text-sm font-medium transition-all duration-200;
+  color: var(--color-text-secondary);
+
+  &:hover {
+    @apply border-primary/30 bg-primary-light;
+    color: var(--color-primary);
+  }
+}
+
+/* ── Type Dropdown ──────────────────────────────────────────────── */
+.type-dropdown {
+  min-width: 180px;
+  max-height: 320px;
+  padding: 8px;
+}
+
+.type-option {
+  @apply px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150;
+  color: var(--color-text-secondary);
+
+  &:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+  }
+
+  &.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+}
+
+
+
+/* ── Modal Panel ────────────────────────────────────────────────── */
+.modal-panel {
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Stat Bar Chart ─────────────────────────────────────────────── */
+.stat-container {
+  max-width: 100%;
+}
+
+.stat-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  width: 80px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.stat-value {
+  width: 32px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.stat-bar {
+  flex: 1;
+  background-color: #eaeaea;
+  height: 6px;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+
+/* ── Ability / Type Badges ──────────────────────────────────────── */
+.ts {
+  @apply text-xs capitalize rounded-lg font-semibold py-1.5 px-4;
+}
+
+.toast-0 { @apply text-[#73B861] bg-[#EFF6F3]; }
+.toast-1 { @apply text-[#AC6ACA] bg-[#F7F0FA]; }
+.toast-2 { @apply text-[#758CBD] bg-[#F6F8FD]; }
+.toast-3 { @apply text-[#EB8B85] bg-[#FDF3F3]; }
+.toast-4 { @apply text-[#E0A56B] bg-[#FDF6EF]; }
+
+/* ── Loading Spinner ────────────────────────────────────────────── */
+.loader {
+  display: inline-block;
+  border: 3px solid #E1E9EF;
+  border-radius: 50%;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 0.9s linear infinite;
+
+  &::after {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-bottom-color: var(--color-primary);
+  }
+}
+
+/* ── Utility Classes ─────────────────────────────────────────────── */
+.card-shadow {
+  box-shadow: var(--shadow-card);
+}

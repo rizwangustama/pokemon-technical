@@ -40,7 +40,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             'focus:outline-none focus:ring-2 focus:ring-offset-1',
             error
               ? 'border-red-400 focus:ring-red-400'
-              : 'border-gray-300 focus:ring-blue-500',
+              : 'border-gray-300 focus:ring-primary',
             'disabled:cursor-not-allowed disabled:opacity-50',
             className,
           ]

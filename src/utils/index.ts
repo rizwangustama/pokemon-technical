@@ -21,7 +21,7 @@ export function extractIdFromUrl(url: string): number {
  * Format a number as a zero-padded Pokédex entry string.
  * e.g. 25 → "#025"
  */
-export function formatPokedexNumber(id: number): string {
+export function formatPokedexNumber(id: number | string): string {
   return `#${String(id).padStart(3, '0')}`;
 }
 
@@ -30,4 +30,32 @@ export function formatPokedexNumber(id: number): string {
  */
 export function getPokemonArtworkUrl(id: number | string): string {
   return `${POKEMON_ARTWORK_BASE_URL}/${id}.png`;
+}
+
+/**
+ * Replaces hyphens with spaces and capitalizes each word.
+ * e.g. "special-attack" → "Special Attack"
+ */
+export function formatSpasi(value: string | undefined): string {
+  if (!value) return '';
+  return value
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+/**
+ * Abbreviates long stat names for display in stat bars.
+ */
+export function formatStatName(statName: string): string {
+  switch (statName) {
+    case 'special-attack':
+      return 'Sp. Atk';
+    case 'special-defense':
+      return 'Sp. Def';
+    case 'hp':
+      return 'HP';
+    default:
+      return formatSpasi(statName);
+  }
 }
