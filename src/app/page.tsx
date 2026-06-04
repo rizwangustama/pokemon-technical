@@ -106,7 +106,6 @@ export default function HomePage() {
 
   return (
     <>
-      <h1 className="text-red-500">Testing</h1>
       <Header />
       <Hero />
       <main id="pokemon-list" className="bg-white pb-16 relative">
