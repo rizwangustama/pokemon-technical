@@ -34,9 +34,9 @@ const POKEMON_TYPES = [
 ];
 
 export default function HomePage() {
-  const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [activeType, setActiveType] = useState('');
+  const [search, setSearch] = useState<string | null>(null);
+  const [debouncedSearch, setDebouncedSearch] = useState<string | null>(null);
+  const [activeType, setActiveType] = useState<string | null>(null);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [selectedPokemon, setSelectedPokemon] = useState<string | null>(null);
@@ -94,13 +94,13 @@ export default function HomePage() {
     return sortDirection === 'asc' ? cmp : -cmp;
   });
 
-  const handleTypeSelect = (type: string) => {
+  const handleTypeSelect = (type: string | null) => {
     setActiveType(type);
     setIsTypeMenuOpen(false);
   };
 
   const handleTypeReset = () => {
-    setActiveType('');
+    setActiveType(null);
     setIsTypeMenuOpen(false);
   };
 

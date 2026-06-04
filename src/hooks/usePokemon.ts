@@ -5,7 +5,7 @@ import { DEFAULT_LIMIT, DEFAULT_PAGE } from '@/constants';
 export const pokemonKeys = {
   all: ['pokemon'] as const,
   lists: () => [...pokemonKeys.all, 'list'] as const,
-  infiniteList: (limit: number, search: string, type: string) =>
+  infiniteList: (limit: number, search: string | null, type: string | null) =>
     [...pokemonKeys.lists(), 'infinite', { limit, search, type }] as const,
   details: () => [...pokemonKeys.all, 'detail'] as const,
   detail: (nameOrId: string | number) =>
@@ -16,7 +16,7 @@ export const pokemonKeys = {
 /**
  * Custom hook to fetch an infinite list of Pokemon.
  */
-export function usePokemonInfiniteList(limit = DEFAULT_LIMIT, search = '', type = '') {
+export function usePokemonInfiniteList(limit = DEFAULT_LIMIT, search: string | null = null, type: string | null = null) {
   return useInfiniteQuery({
     queryKey: pokemonKeys.infiniteList(limit, search, type),
     queryFn: ({ pageParam }) =>

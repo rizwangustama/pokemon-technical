@@ -13,11 +13,11 @@ export const pokemonService = {
   async getPokemonList(
     limit = DEFAULT_LIMIT,
     page = DEFAULT_PAGE,
-    search = '',
-    type = '',
+    search: string | null = null,
+    type: string | null = null,
   ): Promise<PokemonListResponse> {
     const response = await axiosInstance.get<PokemonListResponse>('/pokemon/list', {
-      params: { limit, page, search, type, types: type },
+      params: { limit, page, search, types: type },
     });
     return response.data;
   },
