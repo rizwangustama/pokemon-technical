@@ -1,11 +1,23 @@
+import { sha256 } from 'js-sha256';
+
 /**
- * Generate a SHA-256 signature using the native Web Crypto API
- * which is supported natively in modern browsers and Node.js.
+ * Generate a SHA-256 signature using the native Web Crypto API.
+ * If Web Crypto is unavailable (e.g., in non-secure HTTP contexts in the browser),
+ * it falls back to the js-sha256 library.
  */
 export async function generateSignature(
   message: string,
   secret: string
 ): Promise<string> {
+  const isWebCryptoAvailable =
+    typeof crypto !== 'undefined' &&
+    typeof crypto.subtle !== 'undefined';
+
+  if (!isWebCryptoAvailable) {
+    // Fallback for non-secure contexts (HTTP)
+    return sha256.hmac(secret, message);
+  }
+
   const encoder = new TextEncoder();
   const secretKeyData = encoder.encode(secret);
   const messageData = encoder.encode(message);
